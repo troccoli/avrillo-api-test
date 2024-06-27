@@ -1,0 +1,72 @@
+openapi: 3.1.0
+info:
+  title: Avrillo Kayne West APIs
+  description: These API provide the user with the ability to received 5 random quotes from Kayne West. They use the publicly available API at https://api.kayne.rest
+  version: 1.0.0
+servers:
+  - url: https://localhost
+security:
+  - api_token: []
+paths:
+  /api/quotes:
+    description: The endpoint returns 5 random Kayne West quotes. Note that multiple calls to this endpoint will return the same quotes.
+    get:
+      summary: Get 5 random quotes
+      operationId: get-quotes
+      responses:
+        '200':
+          description: Five random quotes from Kayne West
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              examples:
+                fiveQuotes:
+                  $ref: '#/components/examples/fiveQuotes'
+        '401':
+          $ref: '#/components/responses/unauthorised'
+  /api/refresh:
+    description: |-
+      The endpoint returns 5 random Kayne West quotes.
+      The quotes will change on every call, but a call to `api/quotes` will return the last quotes returned by this endpoint.
+    get:
+      summary: Refreshes the quotes and returns 5 random Kayne West quotes.
+      operationId: refresh-quotes
+      responses:
+        '200':
+          description: Five random quotes from Kayne West
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              examples:
+                fiveQuotes:
+                  $ref: '#/components/examples/fiveQuotes'
+        '401':
+          $ref: '#/components/responses/unauthorised'
+components:
+  securitySchemes:
+    api_token:
+      type: apiKey
+      in: header
+      name: X-API-Token
+  responses:
+    unauthorised:
+      description: The user is not authorised to perform this action
+      content:
+        text/html:
+          schema:
+            type: string
+          example: Unauthorized.
+  examples:
+    fiveQuotes:
+      value:
+        - For me giving up is way harder than trying.
+        - I wish I had a friend like me
+        - I'm the best
+        - Style is genderless
+        - All the musicians will be free
