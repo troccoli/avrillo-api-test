@@ -54,4 +54,4 @@ artisan command. The command will output the token to be used for authentication
 # API documentation
 
 I have also written some documentation for the API, using OpenAPI v3 standard, and the Redocly CLI tool.
-It can be accessed on 'http://localhost/openapi.html'.
+It can be accessed on http://localhost/openapi.html.
