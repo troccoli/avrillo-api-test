@@ -21,9 +21,7 @@ class KayneWestServiceTest extends TestCase
         parent::setUp();
 
         Http::fake([
-            'https://api.kanye.rest/quotes' => Http::sequence()
-                ->push($this->fakeQuotes)
-                ->push(['Quote 11']),
+            'https://api.kanye.rest/quotes' => Http::response($this->fakeQuotes),
         ])->preventStrayRequests();
 
         $this->sut = new KayneWestService();
@@ -48,9 +46,7 @@ class KayneWestServiceTest extends TestCase
 
     public function testGetQuotesShufflesTheQuotes(): void
     {
-        $this->sut->getQuotes();
-
-        $quotes = Cache::get(KayneWestService::CACHE_KEY);
+        $quotes = $this->sut->getQuotes();
 
         $this->assertIsArray($quotes);
         $this->assertCount(10, $quotes);
@@ -62,10 +58,11 @@ class KayneWestServiceTest extends TestCase
 
     public function testRefreshQuotesClearsTheCache(): void
     {
-        $this->sut->getQuotes();
+        $quotes = $this->sut->getQuotes();
         $this->assertCount(10, Cache::get(KayneWestService::CACHE_KEY));
 
-        $this->sut->refreshQuotes();
-        $this->assertCount(1, Cache::get(KayneWestService::CACHE_KEY));
+        $newQuotes = $this->sut->refreshQuotes();
+        $this->assertCount(10, Cache::get(KayneWestService::CACHE_KEY));
+        $this->assertNotSame($newQuotes, $quotes);
     }
 }

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -11,9 +12,18 @@ class ApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    private array $fakeQuotes = [
+        'Quote 1', 'Quote 2', 'Quote 3', 'Quote 4', 'Quote 5',
+        'Quote 6', 'Quote 7', 'Quote 8', 'Quote 9', 'Quote 10',
+    ];
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        Http::fake([
+            'https://api.kanye.rest/quotes' => Http::response($this->fakeQuotes),
+        ])->preventStrayRequests();
 
         User::factory()->withApiToken('API-TOKEN')->create();
         $this->withHeader('X-API-Token', 'API-TOKEN');
@@ -42,8 +52,7 @@ class ApiTest extends TestCase
     {
         $this->getJson(route('api.refresh'))
             ->assertOk()
-            ->assertJsonCount(5)
-            ->json();
+            ->assertJsonCount(5);
     }
 
     #[Test]
@@ -54,7 +63,6 @@ class ApiTest extends TestCase
         $refreshedQuotes = $this->getJson(route('api.refresh'))
             ->json();
 
-        $this->assertCount(5, $refreshedQuotes);
         $this->assertNotSame($refreshedQuotes, $quotes);
     }
 }

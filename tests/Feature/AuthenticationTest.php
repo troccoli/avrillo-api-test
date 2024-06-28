@@ -14,8 +14,8 @@ final class AuthenticationTest extends TestCase
     public static function urlProvider(): array
     {
         return [
-            'Quote API' => ['api/quotes'],
-            'Refresh API' => ['api/refresh'],
+            'Quote endpoint' => ['api/quotes'],
+            'Refresh endpoint' => ['api/refresh'],
         ];
     }
 
@@ -24,8 +24,6 @@ final class AuthenticationTest extends TestCase
     public function it_needs_the_proper_header(string $url): void
     {
         $this->getJson($url)
-            ->dumpHeaders()
-            ->dump()
             ->assertUnauthorized();
     }
 
